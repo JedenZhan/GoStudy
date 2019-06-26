@@ -2,39 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/garyburd/redigo/redis"
 )
 
 func main() {
-	//声明变量接收输入
-	key := ""
-	loop := true
-	for {
-		fmt.Println(`
-			------家庭收支软件------
-			1.收支明细
-			2.登记收入
-			3.登记支出
-			4.退出
-		`)
-		fmt.Print("请选择:")
-
-		fmt.Scanln(&key)
-
-		switch key {
-		case "1":
-			fmt.Println("----收支明细----")
-		case "2":
-			fmt.Println("----登记收入----")
-		case "3":
-			fmt.Println("----登记支出----")
-		case "4":
-			loop = false
-		default:
-			fmt.Println("请输入正确的选项")
-		}
-		if !loop {
-			break
-		}
+	var r string
+	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("redis.err", err)
+		return
 	}
-	fmt.Println("你已滚蛋...")
+	defer conn.Close()
+	_, err = conn.Do("Set", "name", "TomJerry")
+	if err != nil {
+		fmt.Println("啊啊啊啊错误了", err)
+	}
+
+	r, err = redis.String(conn.Do("Get", "name"))
+	fmt.Println("connect and do Ok", r)
 }
