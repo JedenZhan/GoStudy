@@ -157,9 +157,129 @@ func myFunc(r Rectangle) float64 {
 
 
 
-## 
+## GO 语法小结
+
+- var和const进行变量和常量的声明
+- package和import为包管理和导入包
+- func进行函数定义
+- return用于函数返回值,多个返回值用逗号隔开,并且要声明返回类型
+- defer用于函数结束前执行的最后一行代码
+- go用于并行
+- select用于选择不同的通讯
+- interface定义接口
+- struct定义抽象数据类型
+- 流程控制
+- chan用于channel通讯
+- map声明map类型数据
+
+- range读取slice, map, channel数据
+
+## GO + Web 编程
+
+### 使用Http包建立Web服务
+
+```go
+package main
+import (
+	"fmt"
+    "net/http"
+    "strings"
+    "log"
+)
+
+func sayHelloName(w http.ResponseWriter, r *http.Request) {
+    r.ParseForm() // 解析参数
+    fmt.Println(r.form) // 输出到服务端的信息
+    fmt.Println("path路径", r.URL.Path)
+    fmt.Println("scheme", r.URL.Scheme)
+    fmt.Println(r.Form("url_long"))
+    for k, v := range r.Form["url_long"] {
+        fmt.Println("key:", k)
+        fmt.Println("value:", value)
+    }
+    fmt.Fprintf(w, "hello Client")
+}
+
+func main() {
+    http.HandleFunc("/", sayHelloName)
+    err := http.ListenAndServe(":9090", nil)
+    if err != nil {
+        log.Fatal("listenAndserve:", err)
+    }
+}
+```
+
+### Go语言http包运行机制
+
+1. 创建Listen Socket, 监听指定端口, 等待客户端请求到来
+2. Listen Socket接受客户端请求, 得到Client Socket, 接下来通过Client Socket与客户端通信
+3. 处理客户端请求, 先从Client Socket读取请求头, 如果是POST方法, 还可能要读取客户端提交的数据, 然后交给相应的handler去处理, handler处理完准备好客户端需要的数据, 通过Client Socket写给客户端
+
+### 剖析http包的内容
 
 
+
+## 表单
+
+不多废话,直接撸代码
+
+html:
+
+```html
+<form action="http://127.0.0.1:9090/login">
+	username: <input type="text" name="username">
+	password: <input type="password" name="password">
+	<input type="submit" value="登录"> 前端不解释
+</form>
+```
+
+Go:
+
+```go
+package main
+
+import (
+    "fmt"
+    "html/template"
+    "log"
+    "net/http"
+	"strings"
+)
+
+func sayHelloName(w http.ResponseWriter, r *http.Request) {
+    r.ParseForm() // 先解析参数
+    fmt.Println(r.Form)
+    fmt.Println("path", r.URL.Path)
+    fmt.Println("scheme", r.URL.Scheme)
+    fmt.Println(r.Form["url_long"])
+    for k, v := range r.Form["url_long"] {
+        fmt.Println("key:", k)
+        fmt.Println("value:", value)
+    }
+    fmt.Fprintf(w, "hello Client")
+} // 老代码
+
+func login(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("methods---:", r.methods) // 获取方法
+    if r.methods == "GET" {
+        t, _ := template.ParseFiles("login.gtpl")
+        t.Execute(w, nil)
+    } else {
+        r.ParseForm()
+        fmt.Println("username---:", r.Form["username"]) // post方法直接获取
+        fmt.Println("password---:", r.Form["password"])
+    }
+}
+
+func main() {
+    http.HandleFunc("/", sayHelloName)
+    http.HandleFunc("/login", login) // 一个路由一个处理函数
+    err := http.ListenAndServe(":9090", nil)
+    if err != nil {
+        log.Fatal("listenAndserve:", err)
+    }
+}
+```
 
 ## Redis
 

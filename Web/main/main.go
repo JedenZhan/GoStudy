@@ -1,26 +1,47 @@
 package main
 
 import (
-	f "fmt"
+	"fmt"
 	"net/http"
 )
 
-func sayHelloName(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm() // 解析参数
-	f.Println(r.Form)
-	f.Println("path", r.URL.Path)
-	f.Println("scheme", r.URL.Scheme)
+// func sayHelloName(w http.ResponseWriter, r *http.Request) {
+// 	r.ParseForm() // 解析参数
+// 	f.Println(r.Form)
+// 	f.Println("path", r.URL.Path)
+// 	f.Println("scheme", r.URL.Scheme)
 
-	for k, v := range r.Form {
-		f.Println("key", k, "value", v)
+// 	for k, v := range r.Form {
+// 		f.Println("key", k, "value", v)
+// 	}
+// 	f.Fprintf(w, "{name: \"JedenZhan\"}")
+// }
+
+// func main() {
+// 	http.HandleFunc("/", sayHelloName)
+// 	err := http.ListenAndServe(":9090", nil)
+// 	if err != nil {
+// 		f.Println("err", err)
+// 	}
+// }
+
+type MyMux struct {
+}
+
+func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		sayHelloName(w, r)
+		return
 	}
-	f.Fprintf(w, "Hello")
+	http.NotFound(w, r)
+	return
+}
+
+func sayHelloName(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello MyRoute")
 }
 
 func main() {
-	http.HandleFunc("/", sayHelloName)
-	err := http.ListenAndServe(":9090", nil)
-	if err != nil {
-		f.Println("err", err)
-	}
+	mux := &MyMux{}
+	http.ListenAndServe(":9090", mux)
 }
