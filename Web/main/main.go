@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+	// "net/http"
+	"time"
 )
 
 // func sayHelloName(w http.ResponseWriter, r *http.Request) {
@@ -25,23 +26,35 @@ import (
 // 	}
 // }
 
-type MyMux struct {
-}
+// type MyMux struct {
+// }
 
-func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		sayHelloName(w, r)
-		return
+// func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// 	if r.URL.Path == "/" {
+// 		sayHelloName(w, r)
+// 		return
+// 	}
+// 	http.NotFound(w, r)
+// 	return
+// }
+
+// func sayHelloName(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Fprintf(w, "Hello MyRoute")
+// }
+
+// func main() {
+// 	mux := &MyMux{}
+// 	http.ListenAndServe(":9090", mux)
+// }
+
+func numbers() {
+	for i := 1; i <= 5; i++ {
+		time.Sleep(250 * time.Millisecond)
+		fmt.Println("%d ", i)
 	}
-	http.NotFound(w, r)
-	return
-}
-
-func sayHelloName(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello MyRoute")
 }
 
 func main() {
-	mux := &MyMux{}
-	http.ListenAndServe(":9090", mux)
+	go numbers()
+
 }
