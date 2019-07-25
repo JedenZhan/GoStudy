@@ -2,67 +2,54 @@ package main
 
 import (
 	"fmt"
-	// "net/http"
-	"time"
+	"log"
+	"net/http"
+
+	"github.com/garyburd/redigo/redis"
 )
 
-// func sayHelloName(w http.ResponseWriter, r *http.Request) {
-// 	r.ParseForm() // 解析参数
-// 	f.Println(r.Form)
-// 	f.Println("path", r.URL.Path)
-// 	f.Println("scheme", r.URL.Scheme)
-
-// 	for k, v := range r.Form {
-// 		f.Println("key", k, "value", v)
-// 	}
-// 	f.Fprintf(w, "{name: \"JedenZhan\"}")
-// }
-
-// func main() {
-// 	http.HandleFunc("/", sayHelloName)
-// 	err := http.ListenAndServe(":9090", nil)
+// func checkErr(err) {
 // 	if err != nil {
-// 		f.Println("err", err)
+// 		return "出错了 %r"err
 // 	}
 // }
 
-// type MyMux struct {
-// }
+func sayHello(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	fmt.Println(r.Form)
 
-// func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path == "/" {
-// 		sayHelloName(w, r)
-// 		return
-// 	}
-// 	http.NotFound(w, r)
-// 	return
-// }
+}
 
-// func sayHelloName(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "Hello MyRoute")
-// }
+func reg(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	formData := r.Form
+	userName := formData["username"]
+	password := formData["password"]
+	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
+	defer conn.Close()
+	if err != nil {
+		fmt.Println("连接失败....")
+	}
+	_, err = conn.Do("Set", "userName", userName)
+	_, err = conn.Do("Set", "passWord", password)
 
-// func main() {
-// 	mux := &MyMux{}
-// 	http.ListenAndServe(":9090", mux)
-// }
-
-func numbers() {
-	for i := 1; i <= 5; i++ {
-		time.Sleep(250 * time.Millisecond)
-		fmt.Printf("%d ", i)
+	fmt.Println(formData["username"], formData["password"])
+	if err != nil {
+		fmt.Println("")
 	}
 }
 
-func alphabets() {
-	for i := 'a'; i <= 'e'; i++ {
-		time.Sleep(400 * time.Millisecond)
-		fmt.Printf("%c ", i)
-	}
+func login(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	// formData := r.Form
+
 }
+
 func main() {
-	go numbers()
-	go alphabets()
-	time.Sleep(3000 * time.Millisecond)
-	fmt.Println("main terminated")
+	http.HandleFunc("/", sayHello)
+	http.HandleFunc("/reg", reg)
+	err := http.ListenAndServe(":9090", nil)
+	if err != nil {
+		log.Fatal("listenAndServe:", err)
+	}
 }
