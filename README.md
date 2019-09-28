@@ -38,15 +38,9 @@ var a, b = 100, "jeden" // 不能有类型
 
 ### 数据类型
 
-![img](./imgs/Go数据类型.png)
-
 #### int
 
-![img](./imgs/int.png)
-
 ##### 正数
-
-![img](./imgs/正数.png)
 
 #### 字符串
 
