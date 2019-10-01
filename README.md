@@ -6,7 +6,6 @@
 bash install_plugin.sh
 ```
 
-
 ## GO 语法小结
 
 - var和const进行变量和常量的声明
@@ -31,27 +30,3 @@ bash install_plugin.sh
 - [函数(go一等公民)](./MDs/function.md)
 - [协程和管道(goroutine&channel)](./MDs/goroutine&channel.md)
 - [go+web编程](./MDs/go&web.md)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
