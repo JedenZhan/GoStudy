@@ -1,11 +1,5 @@
 关于Vscode报错的解决(mac or linux)
 
-打开vscode_config, 复制三个脚本到$GOPATH/src下, 先增加执行权限(chmod +r ./*.sh)
-
-```shell
-bash install_plugin.sh
-```
-
 ## GO 语法小结
 
 - var和const进行变量和常量的声明
